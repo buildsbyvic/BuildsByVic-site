@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Track Your Repair — BuildsByVic</title>
+<meta name="description" content="Check the status of your PC repair or build with your ticket number and contact info.">
+<link rel="icon" type="image/png" href="assets/img/favicon-32.png">
+<link rel="apple-touch-icon" href="assets/img/favicon-180.png">
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .lookup-form { display: grid; gap: 20px; }
+  .form-field { display: flex; flex-direction: column; gap: 8px; }
+  .form-field label { font-size: 0.85rem; font-weight: 600; color: var(--white); }
+  .form-field input {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 13px 14px;
+    color: var(--white);
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    letter-spacing: 0.02em;
+  }
+  .form-field input:focus { outline: none; border-color: var(--blue); }
+  .form-hint { color: var(--slate-dim); font-size: 0.8rem; }
+
+  #lookup-error {
+    display: none;
+    margin-top: 20px;
+    padding: 14px 16px;
+    border-radius: var(--radius-sm);
+    background: rgba(255,138,61,0.08);
+    border: 1px solid rgba(255,138,61,0.3);
+    color: var(--amber);
+    font-size: 0.9rem;
+  }
+
+  #lookup-result { display: none; margin-top: 32px; }
+  .result-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .result-item {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 20px;
+    text-align: center;
+  }
+  .result-label {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--slate-dim);
+    margin-bottom: 10px;
+  }
+  .result-value { font-size: 1.15rem; font-weight: 600; color: var(--blue); }
+  .result-value.status { color: var(--amber); }
+  @media (max-width: 720px) { .result-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo"><img src="assets/img/logo.webp" alt="BuildsByVic"></a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="services.html">Services</a>
+      <a href="portfolio.html">Portfolio</a>
+      <a href="about.html">About</a>
+      <a href="track.html" class="active">Track Repair</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <div class="nav-cta">
+      <a href="tel:8134443599" class="btn btn-secondary">(813) 444-3599</a>
+      <a href="book.html" class="btn btn-primary">Book Now</a>
+    </div>
+    <button class="nav-toggle" aria-label="Toggle menu">☰</button>
+  </div>
+  <div class="mobile-menu">
+    <a href="index.html">Home</a>
+    <a href="services.html">Services</a>
+    <a href="portfolio.html">Portfolio</a>
+    <a href="about.html">About</a>
+    <a href="track.html" class="active">Track Repair</a>
+    <a href="contact.html">Contact</a>
+    <a href="book.html">Book Now</a>
+  </div>
+</nav>
+
+<section class="page-hero">
+  <div class="container">
+    <div class="eyebrow">Track your repair</div>
+    <h1 style="font-size:clamp(2rem,4vw,2.8rem);">Check your repair status.</h1>
+    <p class="lede" style="margin-top:16px;">Enter your ticket number along with the phone number or email you gave at drop-off. Both are required to keep your info private.</p>
+  </div>
+</section>
+
+<section class="section-tight">
+  <div class="container" style="max-width:640px;">
+
+    <div class="card" style="padding:36px;">
+      <form class="lookup-form" id="lookup-form">
+        <div class="form-field">
+          <label for="ticket">Ticket Number</label>
+          <input type="text" id="ticket" name="ticket" placeholder="e.g. BBV-1042" required autocomplete="off">
+        </div>
+        <div class="form-field">
+          <label for="contact">Phone or Email Used at Drop-off</label>
+          <input type="text" id="contact" name="contact" placeholder="(813) 555-0123 or you@email.com" required autocomplete="off">
+          <span class="form-hint">Used only to confirm this repair belongs to you — never stored or shown to anyone else.</span>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block" id="lookup-submit">Check Status</button>
+      </form>
+
+      <div id="lookup-error"></div>
+
+      <div id="lookup-result">
+        <div class="result-grid">
+          <div class="result-item">
+            <div class="result-label">Status</div>
+            <div class="result-value status" id="result-status">—</div>
+          </div>
+          <div class="result-item">
+            <div class="result-label">Start Date</div>
+            <div class="result-value" id="result-start">—</div>
+          </div>
+          <div class="result-item">
+            <div class="result-label">Est. Completion</div>
+            <div class="result-value" id="result-completion">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<svg class="trace-divider" viewBox="0 0 1140 40" preserveAspectRatio="none">
+  <path d="M0,20 L420,20 L450,8 L690,8 L720,20 L1140,20"></path>
+  <circle cx="450" cy="8" r="4"></circle>
+  <circle cx="720" cy="20" r="4"></circle>
+</svg>
+
+<!-- STATUS GLOSSARY -->
+<section class="section">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow">What the statuses mean</div>
+      <h2>No guessing where your PC stands.</h2>
+    </div>
+    <div class="grid-3">
+      <div class="card">
+        <div class="tag" style="margin-bottom:14px;">Step 1</div>
+        <h3 style="font-size:1.05rem;">Received</h3>
+        <p style="color:var(--slate); margin-top:10px; font-size:0.9rem;">Your PC's in hand and logged in. Diagnosis or work is about to start.</p>
+      </div>
+      <div class="card">
+        <div class="tag badge-blue" style="margin-bottom:14px;">Step 2</div>
+        <h3 style="font-size:1.05rem;">Diagnosing / In Progress</h3>
+        <p style="color:var(--slate); margin-top:10px; font-size:0.9rem;">Actively being worked on — troubleshooting, repairing, or assembling.</p>
+      </div>
+      <div class="card">
+        <div class="tag badge-amber" style="margin-bottom:14px;">If needed</div>
+        <h3 style="font-size:1.05rem;">Awaiting Parts</h3>
+        <p style="color:var(--slate); margin-top:10px; font-size:0.9rem;">Work is paused while a part gets sourced. I'll reach out with details if this applies to you.</p>
+      </div>
+      <div class="card">
+        <div class="tag badge-blue" style="margin-bottom:14px;">Step 3</div>
+        <h3 style="font-size:1.05rem;">Ready for Pickup</h3>
+        <p style="color:var(--slate); margin-top:10px; font-size:0.9rem;">All done and tested. Ready whenever you are.</p>
+      </div>
+      <div class="card">
+        <div class="tag badge-amber" style="margin-bottom:14px;">Complete</div>
+        <h3 style="font-size:1.05rem;">Completed</h3>
+        <p style="color:var(--slate); margin-top:10px; font-size:0.9rem;">Picked up and closed out. Thanks for trusting BuildsByVic with your PC.</p>
+      </div>
+      <div class="card" style="border-style:dashed; display:flex; flex-direction:column; justify-content:center;">
+        <h3 style="font-size:1.05rem;">Status looks off?</h3>
+        <p style="color:var(--slate); margin-top:10px; font-size:0.9rem;">Reach out any time and I'll clarify exactly where things stand.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HELP CTA -->
+<section class="section-tight">
+  <div class="container">
+    <div class="card" style="padding:40px; text-align:center;">
+      <h2 style="font-size:1.5rem;">Can't find your ticket?</h2>
+      <p class="lede" style="margin:14px auto 0; text-align:center;">Double-check the ticket number from your intake receipt, and make sure you're entering the same phone or email you gave when you dropped off your PC. Still stuck? Just reach out directly.</p>
+      <div style="display:flex; gap:14px; justify-content:center; margin-top:26px; flex-wrap:wrap;">
+        <a href="tel:8134443599" class="btn btn-primary">Call (813) 444-3599</a>
+        <a href="contact.html" class="btn btn-secondary">Send a Message</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a href="index.html" class="footer-logo"><img src="assets/img/logo.webp" alt="BuildsByVic"></a>
+        <p class="footer-desc">Custom PC builds, repair, and upgrades — serving Tampa, Lutz, Wesley Chapel, Carrollwood, and Clearwater.</p>
+        <div class="footer-social">
+          <a href="https://instagram.com/buildsbyvic" aria-label="Instagram" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg></a>
+          <a href="https://tiktok.com/@buildsbyvic" aria-label="TikTok" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Site</h4>
+        <a href="services.html">Services</a>
+        <a href="portfolio.html">Portfolio</a>
+        <a href="about.html">About</a>
+        <a href="track.html">Track Repair</a>
+        <a href="book.html">Book Now</a>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <a href="tel:8134443599">(813) 444-3599</a>
+        <a href="mailto:buildsbyvic@gmail.com">buildsbyvic@gmail.com</a>
+        <p>Tampa, FL — by appointment</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span id="year"></span> BuildsByVic. All rights reserved.</span>
+      <span>Tampa · Lutz · Wesley Chapel · Carrollwood · Clearwater</span>
+    </div>
+  </div>
+</footer>
+
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+<script src="js/main.js"></script>
+<script>
+  // ⚠️ Paste your deployed Google Apps Script Web App URL here
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwuwZUJAWe-NF26I6FJFCLt8sZKNSCpXAzjIqLZVQz7o_-_YYsJC0y7XIi9zDbrxKkZLA/exec';
+
+  const form = document.getElementById('lookup-form');
+  const submitBtn = document.getElementById('lookup-submit');
+  const errorBox = document.getElementById('lookup-error');
+  const resultBox = document.getElementById('lookup-result');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    errorBox.style.display = 'none';
+    resultBox.style.display = 'none';
+
+    const ticket = document.getElementById('ticket').value.trim();
+    const contact = document.getElementById('contact').value.trim();
+
+    if (!ticket || !contact) return;
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Checking...';
+
+    try {
+      const url = `${SCRIPT_URL}?ticket=${encodeURIComponent(ticket)}&contact=${encodeURIComponent(contact)}`;
+      const res = await fetch(url);
+      const data = await res.json();
+
+      if (data.success) {
+        document.getElementById('result-status').textContent = data.status || 'Not yet updated';
+        document.getElementById('result-start').textContent = data.startDate || 'TBD';
+        document.getElementById('result-completion').textContent = data.estCompletion || 'TBD';
+        resultBox.style.display = 'block';
+      } else {
+        errorBox.textContent = data.error || 'No matching repair found. Double-check your ticket number and contact info.';
+        errorBox.style.display = 'block';
+      }
+    } catch (err) {
+      errorBox.textContent = 'Something went wrong checking your status. Please try again or contact us directly.';
+      errorBox.style.display = 'block';
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Check Status';
+    }
+  });
+</script>
+</body>
+</html>
