@@ -135,9 +135,8 @@
       <h3 style="font-size:1.1rem; margin-bottom:6px;">Option 2 — Send the details directly</h3>
       <p style="color:var(--slate); margin-bottom:18px; font-size:0.9rem;">Skip the call — fill this out and I'll follow up with a quote, usually within a day.</p>
 
-      <form action="https://formspree.io/f/xpparkzn" method="POST" class="card" style="padding:36px;">
+      <form action="https://formspree.io/f/xpparkzn" method="POST" id="build-form" class="card" style="padding:36px;">
         <input type="hidden" name="_subject" value="New Custom Build Request — BuildsByVic">
-        <input type="hidden" name="_next" value="https://buildsbyvic.com/thanks.html">
         <div class="form-grid">
           <div class="form-field">
             <label for="name">Name</label>
@@ -193,6 +192,7 @@
           </div>
         </div>
         <button type="submit" class="btn btn-primary btn-block">Send Build Request</button>
+        <p id="build-form-error" style="color:var(--amber); font-size:0.85rem; margin-top:12px; display:none;">Something went wrong sending that — please try again, or call/text (813) 444-3599 directly.</p>
       </form>
     </div>
 
@@ -306,6 +306,33 @@
   if (window.location.hash === '#custom-build') {
     document.querySelector('[data-tab="custom-build"]').click();
   }
+
+  // Custom build form — AJAX submit so we control the success redirect
+  const buildForm = document.getElementById('build-form');
+  buildForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const submitBtn = buildForm.querySelector('button[type="submit"]');
+    const errorMsg = document.getElementById('build-form-error');
+    errorMsg.style.display = 'none';
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending...';
+    try {
+      const res = await fetch(buildForm.action, {
+        method: 'POST',
+        body: new FormData(buildForm),
+        headers: { 'Accept': 'application/json' }
+      });
+      if (res.ok) {
+        window.location.href = 'thanks.html';
+      } else {
+        throw new Error('Submission failed');
+      }
+    } catch (err) {
+      errorMsg.style.display = 'block';
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Send Build Request';
+    }
+  });
 </script>
 </body>
 </html>

@@ -126,9 +126,8 @@
     </div>
 
     <div class="reveal">
-      <form action="https://formspree.io/f/xpparkzn" method="POST" class="card" style="padding:32px;">
+      <form action="https://formspree.io/f/xpparkzn" method="POST" id="contact-form" class="card" style="padding:32px;">
         <input type="hidden" name="_subject" value="New message — BuildsByVic Contact Page">
-        <input type="hidden" name="_next" value="https://buildsbyvic.com/thanks.html">
         <h3 style="margin-bottom:20px;">Send a message</h3>
         <div class="form-field">
           <label for="c-name">Name</label>
@@ -147,6 +146,7 @@
           <textarea id="c-message" name="message" required placeholder="What's going on with your PC, or what are you looking to build?"></textarea>
         </div>
         <button type="submit" class="btn btn-primary btn-block">Send Message</button>
+        <p id="contact-form-error" style="color:var(--amber); font-size:0.85rem; margin-top:12px; display:none;">Something went wrong sending that — please try again, or call/text (813) 444-3599 directly.</p>
       </form>
     </div>
 
@@ -187,5 +187,32 @@
 
 <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
 <script src="js/main.js"></script>
+<script>
+  const contactForm = document.getElementById('contact-form');
+  contactForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const submitBtn = contactForm.querySelector('button[type="submit"]');
+    const errorMsg = document.getElementById('contact-form-error');
+    errorMsg.style.display = 'none';
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending...';
+    try {
+      const res = await fetch(contactForm.action, {
+        method: 'POST',
+        body: new FormData(contactForm),
+        headers: { 'Accept': 'application/json' }
+      });
+      if (res.ok) {
+        window.location.href = 'thanks.html';
+      } else {
+        throw new Error('Submission failed');
+      }
+    } catch (err) {
+      errorMsg.style.display = 'block';
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Send Message';
+    }
+  });
+</script>
 </body>
 </html>
