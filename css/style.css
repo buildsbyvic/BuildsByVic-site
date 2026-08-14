@@ -272,6 +272,8 @@ h3 { font-size: 1.3rem; }
   border-radius: var(--radius);
   padding: 28px;
   transition: border-color 0.2s ease, transform 0.2s ease;
+  display: block;
+  text-decoration: none;
 }
 
 .card:hover { border-color: var(--blue-dim); }
