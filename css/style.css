@@ -382,7 +382,45 @@ h3 { font-size: 1.3rem; }
   border-bottom: 1px solid var(--border);
 }
 
-/* ---------- Portfolio ---------- */
+/* ---------- About page background texture ---------- */
+
+.about-bg-wrap {
+  position: relative;
+  overflow: hidden;
+}
+.about-bg-wrap .bg-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  opacity: 0.55;
+  z-index: 0;
+}
+.about-bg-wrap::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(10,13,18,0.5) 0%, rgba(10,13,18,0.72) 45%, var(--bg) 100%);
+  z-index: 0;
+}
+.about-bg-wrap > * {
+  position: relative;
+  z-index: 1;
+}
+
+.bio-bubble {
+  background: rgba(19,25,34,0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 40px;
+}
+@media (max-width: 640px) {
+  .bio-bubble { padding: 28px 22px; }
+}
 
 .decorative-band {
   position: relative;
