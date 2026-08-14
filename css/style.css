@@ -512,7 +512,37 @@ h3 { font-size: 1.3rem; }
   letter-spacing: 0.02em;
 }
 
-/* ---------- Portfolio lightbox (shared-element expand) ---------- */
+/* ---------- Decorative PCB trace margins (wide screens only, tiles down the page) ---------- */
+
+.pcb-decor-wrap {
+  position: relative;
+}
+.pcb-decor-strip {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 340px;
+  background-repeat: repeat-y;
+  background-size: 340px 1020px;
+  opacity: 0.28;
+  pointer-events: none;
+  z-index: 0;
+  display: none;
+}
+.pcb-decor-strip-left {
+  left: -40px;
+  background-image: url('../assets/img/decor/pcb-trace-left.png');
+  background-position: top left;
+}
+.pcb-decor-strip-right {
+  right: -40px;
+  background-image: url('../assets/img/decor/pcb-trace-right.png');
+  background-position: top right;
+}
+
+@media (min-width: 1900px) {
+  .pcb-decor-strip { display: block; }
+}
 
 .lightbox-backdrop {
   position: fixed;
