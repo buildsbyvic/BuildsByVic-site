@@ -516,14 +516,15 @@ h3 { font-size: 1.3rem; }
 
 .pcb-decor-wrap {
   position: relative;
+  --pcb-w: clamp(340px, calc((100vw - 1140px) / 2 - 40px), 900px);
 }
 .pcb-decor-strip {
   position: absolute;
   top: 0;
   bottom: 0;
-  width: 340px;
+  width: var(--pcb-w);
   background-repeat: repeat-y;
-  background-size: 340px 1020px;
+  background-size: var(--pcb-w) calc(var(--pcb-w) * 3);
   opacity: 0.28;
   pointer-events: none;
   z-index: 0;
