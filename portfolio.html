@@ -159,6 +159,17 @@
   </div>
 </section>
 
+<!-- Lightbox for portfolio card expand -->
+<div class="lightbox-backdrop" id="lightbox-backdrop"></div>
+<div class="lightbox-card" id="lightbox-card">
+  <button class="lightbox-close" id="lightbox-close" aria-label="Close">✕</button>
+  <img id="lightbox-img" src="" alt="">
+  <div class="portfolio-card-info">
+    <h3 id="lightbox-title"></h3>
+    <p id="lightbox-desc"></p>
+  </div>
+</div>
+
 <svg class="trace-divider" viewBox="0 0 1140 40" preserveAspectRatio="none" style="margin-top:20px;">
   <path d="M0,20 L500,20 L530,32 L610,32 L640,20 L1140,20"></path>
   <circle cx="530" cy="32" r="4"></circle>
@@ -212,5 +223,93 @@
 
 <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
 <script src="js/main.js"></script>
+<script>
+  // Portfolio lightbox — shared-element expand/collapse
+  (function () {
+    const backdrop = document.getElementById('lightbox-backdrop');
+    const card = document.getElementById('lightbox-card');
+    const img = document.getElementById('lightbox-img');
+    const title = document.getElementById('lightbox-title');
+    const desc = document.getElementById('lightbox-desc');
+    const closeBtn = document.getElementById('lightbox-close');
+    const cards = document.querySelectorAll('.portfolio-card');
+
+    let originRect = null;
+    let isOpen = false;
+
+    function openFromCard(el) {
+      const rect = el.getBoundingClientRect();
+      const srcImg = el.querySelector('img');
+      const h3 = el.querySelector('h3');
+      const p = el.querySelector('p');
+
+      originRect = rect;
+      img.src = srcImg.src;
+      img.alt = srcImg.alt;
+      title.textContent = h3 ? h3.textContent : '';
+      desc.textContent = p ? p.textContent : '';
+
+      // Start the lightbox card at the exact position/size of the clicked card
+      card.style.top = rect.top + 'px';
+      card.style.left = rect.left + 'px';
+      card.style.width = rect.width + 'px';
+      card.style.height = rect.height + 'px';
+      card.style.transition = 'none';
+      card.classList.add('open');
+      backdrop.classList.add('open');
+      document.body.style.overflow = 'hidden';
+      isOpen = true;
+
+      // Force a reflow so the browser registers the start position before animating
+      void card.offsetHeight;
+      card.style.transition = '';
+
+      requestAnimationFrame(() => {
+        const targetW = Math.min(window.innerWidth * 0.82, 640);
+        const targetH = Math.min(window.innerHeight * 0.82, targetW * (4 / 3));
+        card.style.top = ((window.innerHeight - targetH) / 2) + 'px';
+        card.style.left = ((window.innerWidth - targetW) / 2) + 'px';
+        card.style.width = targetW + 'px';
+        card.style.height = targetH + 'px';
+      });
+    }
+
+    function close() {
+      if (!isOpen || !originRect) return;
+      card.style.top = originRect.top + 'px';
+      card.style.left = originRect.left + 'px';
+      card.style.width = originRect.width + 'px';
+      card.style.height = originRect.height + 'px';
+      backdrop.classList.remove('open');
+      document.body.style.overflow = '';
+      isOpen = false;
+
+      setTimeout(() => {
+        card.classList.remove('open');
+      }, 420);
+    }
+
+    cards.forEach(el => {
+      el.addEventListener('click', () => openFromCard(el));
+    });
+
+    backdrop.addEventListener('click', close);
+    closeBtn.addEventListener('click', close);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') close();
+    });
+
+    // Keep the open lightbox aligned if the window resizes
+    window.addEventListener('resize', () => {
+      if (!isOpen) return;
+      const targetW = Math.min(window.innerWidth * 0.82, 640);
+      const targetH = Math.min(window.innerHeight * 0.82, targetW * (4 / 3));
+      card.style.top = ((window.innerHeight - targetH) / 2) + 'px';
+      card.style.left = ((window.innerWidth - targetW) / 2) + 'px';
+      card.style.width = targetW + 'px';
+      card.style.height = targetH + 'px';
+    });
+  })();
+</script>
 </body>
 </html>
