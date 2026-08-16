@@ -25,7 +25,7 @@
   --font-body: 'Inter', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
-  --container: 1140px;
+  --container: 1200px;
   --radius: 10px;
   --radius-sm: 6px;
 }
@@ -86,9 +86,9 @@ h1, h2, h3, h4 {
   line-height: 1.15;
 }
 
-h1 { font-size: clamp(2.4rem, 5vw, 3.8rem); font-weight: 700; }
-h2 { font-size: clamp(1.8rem, 3.2vw, 2.5rem); }
-h3 { font-size: 1.3rem; }
+h1 { font-size: clamp(2.6rem, 5.4vw, 4.4rem); font-weight: 700; }
+h2 { font-size: clamp(1.9rem, 3.4vw, 2.9rem); }
+h3 { font-size: 1.35rem; }
 
 .eyebrow {
   font-family: var(--font-mono);
@@ -113,7 +113,7 @@ h3 { font-size: 1.3rem; }
 
 .lede {
   color: var(--slate);
-  font-size: 1.1rem;
+  font-size: 1.18rem;
   max-width: 56ch;
 }
 
@@ -125,11 +125,11 @@ h3 { font-size: 1.3rem; }
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 13px 26px;
+  padding: 15px 30px;
   border-radius: var(--radius-sm);
   font-family: var(--font-body);
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 1rem;
   border: 1px solid transparent;
   transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease, border-color 0.15s ease;
   white-space: nowrap;
@@ -172,7 +172,7 @@ h3 { font-size: 1.3rem; }
   margin: 0 auto;
 }
 
-.nav-logo img { height: 34px; width: auto; }
+.nav-logo img { height: 38px; width: auto; }
 
 .nav-links {
   display: flex;
@@ -255,8 +255,8 @@ h3 { font-size: 1.3rem; }
 
 /* ---------- Sections ---------- */
 
-.section { padding: 96px 0; }
-.section-tight { padding: 64px 0; }
+.section { padding: 108px 0; }
+.section-tight { padding: 72px 0; }
 
 .section-head {
   max-width: 640px;
@@ -348,6 +348,47 @@ h3 { font-size: 1.3rem; }
 .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
 @media (max-width: 860px) {
   .grid-2, .grid-3 { grid-template-columns: 1fr; }
+}
+
+/* ---------- Split two-column layout (hero, feature rows) ---------- */
+/* Ratio is set per-instance via --col-a / --col-b custom props on the element,
+   so this stays a single controllable class instead of one-off inline grids
+   that can't be overridden at mobile widths. */
+.split-2col {
+  display: grid;
+  grid-template-columns: var(--col-a, 1fr) var(--col-b, 1fr);
+  align-items: center;
+}
+@media (max-width: 860px) {
+  .split-2col {
+    grid-template-columns: 1fr;
+    gap: 32px !important;
+  }
+}
+
+/* ---------- Split card (content + price/CTA block) ---------- */
+.split-card {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+}
+@media (max-width: 640px) {
+  .split-card { grid-template-columns: 1fr; }
+}
+
+.price-block { text-align: center; min-width: 160px; }
+@media (max-width: 640px) {
+  .price-block { text-align: left; min-width: 0; margin-top: 20px; }
+}
+
+/* ---------- Small-screen typography & spacing ---------- */
+@media (max-width: 480px) {
+  h1 { font-size: clamp(2rem, 9vw, 2.7rem); }
+  h2 { font-size: clamp(1.6rem, 7vw, 2.1rem); }
+  .lede { font-size: 1.02rem; }
+  .section { padding: 64px 0; }
+  .section-tight { padding: 48px 0; }
+  .btn { padding: 13px 22px; font-size: 0.92rem; }
 }
 
 .tag {
