@@ -29,6 +29,7 @@
 <meta name="twitter:image" content="https://buildsbyvic.com/assets/img/og/og-default.jpg">
 </head>
 <body>
+<div class="zoom-wrap">
 
 <nav class="nav">
   <div class="nav-inner">
@@ -245,7 +246,7 @@
   }
 
   function render(ti, animate){
-    var vw = viewport.getBoundingClientRect().width;
+    var vw = viewport.offsetWidth;
     var el = trackSlides[ti];
     var center = el.offsetLeft + el.offsetWidth / 2;
     track.style.transition = animate ? '' : 'none';
@@ -348,5 +349,6 @@
   });
 })();
 </script>
+</div>
 </body>
 </html>

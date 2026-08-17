@@ -34,6 +34,14 @@
 
 html { scroll-behavior: smooth; }
 
+/* Desktop-only zoom: scales the whole page (type, spacing, images) up an
+   extra ~25% beyond the base sizes below, matching the more "zoomed in"
+   feel the site had under manual 150% browser zoom. Mobile is completely
+   untouched — this only applies above the nav's own desktop breakpoint. */
+@media (min-width: 861px) {
+  .zoom-wrap { zoom: 1.25; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }

@@ -29,6 +29,7 @@
 <meta name="twitter:image" content="https://buildsbyvic.com/assets/img/og/og-default.jpg">
 </head>
 <body>
+<div class="zoom-wrap">
 
 <nav class="nav">
   <div class="nav-inner">
@@ -181,17 +182,6 @@
   </div>
 </section>
 
-<!-- Lightbox for portfolio card expand -->
-<div class="lightbox-backdrop" id="lightbox-backdrop"></div>
-<div class="lightbox-card" id="lightbox-card">
-  <button class="lightbox-close" id="lightbox-close" aria-label="Close">✕</button>
-  <img id="lightbox-img" src="" alt="">
-  <div class="portfolio-card-info">
-    <h3 id="lightbox-title"></h3>
-    <p id="lightbox-desc"></p>
-  </div>
-</div>
-
 <svg class="trace-divider" viewBox="0 0 1140 40" preserveAspectRatio="none" style="margin-top:20px;">
   <path d="M0,20 L500,20 L530,32 L610,32 L640,20 L1140,20"></path>
   <circle cx="530" cy="32" r="4"></circle>
@@ -245,6 +235,19 @@
     </div>
   </div>
 </footer>
+</div>
+
+<!-- Lightbox for portfolio card expand — kept outside .zoom-wrap so its
+     JS-computed pixel positioning always matches the true, unzoomed viewport -->
+<div class="lightbox-backdrop" id="lightbox-backdrop"></div>
+<div class="lightbox-card" id="lightbox-card">
+  <button class="lightbox-close" id="lightbox-close" aria-label="Close">✕</button>
+  <img id="lightbox-img" src="" alt="">
+  <div class="portfolio-card-info">
+    <h3 id="lightbox-title"></h3>
+    <p id="lightbox-desc"></p>
+  </div>
+</div>
 
 <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
 <script src="js/main.js"></script>
