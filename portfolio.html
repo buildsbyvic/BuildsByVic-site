@@ -170,7 +170,7 @@
           <p>Black/blue, lucky cat build</p>
         </div>
       </div>
-      <div class="portfolio-card reveal">
+      <div class="portfolio-card reveal" id="ember">
         <img src="assets/img/portfolio/jp.webp" alt="Black tower build with red theme, nicknamed Ember">
         <div class="portfolio-card-info">
           <h3>Ember</h3>
@@ -334,6 +334,28 @@
       card.style.width = targetW + 'px';
       card.style.height = targetH + 'px';
     });
+  })();
+
+  // Highlight the build someone was linked to (e.g. from a testimonial's "See the build" link).
+  // Scrolling happens after full page load (images included) — the native
+  // anchor-scroll fires too early, before images load and the page settles
+  // to its final height, which can leave the browser scrolled to the wrong spot.
+  (function(){
+    const hash = window.location.hash.replace('#', '');
+    if (!hash) return;
+    const target = document.getElementById(hash);
+    if (!target || !target.classList.contains('portfolio-card')) return;
+
+    function focusTarget(){
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      setTimeout(() => target.classList.add('highlight-target'), 300);
+    }
+
+    if (document.readyState === 'complete') {
+      focusTarget();
+    } else {
+      window.addEventListener('load', focusTarget);
+    }
   })();
 </script>
 </body>
