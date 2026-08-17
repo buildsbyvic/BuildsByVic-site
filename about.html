@@ -289,6 +289,7 @@
     } else {
       isTransitioning = true;
       render(trackIndex, true);
+      armTransitionFallback();
     }
   }
 
@@ -297,17 +298,33 @@
 
   function goToReal(ri){
     if (isTransitioning) return;
+    if (ri === realIndexFromTrack(trackIndex)) return; // already showing this one — nothing to animate
     trackIndex = ri + 1;
     if (reduceMotion) {
       render(trackIndex, false);
     } else {
       isTransitioning = true;
       render(trackIndex, true);
+      armTransitionFallback();
     }
+  }
+
+  // Safety net: if transitionend doesn't fire for any reason (e.g. a
+  // transition to the same visual position produces no event in some
+  // browsers), don't let the carousel get permanently stuck.
+  var transitionFallback = null;
+  function armTransitionFallback(){
+    if (transitionFallback) clearTimeout(transitionFallback);
+    transitionFallback = setTimeout(function(){
+      if (!isTransitioning) return;
+      isTransitioning = false;
+      correctWrap();
+    }, 700);
   }
 
   track.addEventListener('transitionend', function(e){
     if (e.propertyName !== 'transform') return;
+    if (transitionFallback) { clearTimeout(transitionFallback); transitionFallback = null; }
     isTransitioning = false;
     correctWrap();
   });
