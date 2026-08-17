@@ -97,6 +97,75 @@
         <p style="color:var(--slate); font-size:0.9rem; margin-top:10px;">Tampa, Lutz, Wesley Chapel, Carrollwood, and Clearwater — onsite or drop-off.</p>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="section-tight" style="padding-top:0;">
+  <div class="container" style="max-width:900px;">
+    <div class="section-head reveal" style="margin-bottom:36px;">
+      <div class="eyebrow">Reviews</div>
+      <h2 style="font-size:clamp(1.6rem,3vw,2.1rem);">What clients say.</h2>
+    </div>
+
+    <div class="testimonial-carousel reveal">
+      <div class="testimonial-viewport" id="testimonial-viewport">
+        <div class="testimonial-track" id="testimonial-track">
+
+          <div class="testimonial-slide">
+            <div class="testimonial-card">
+              <div class="stars mono" aria-label="5 out of 5 stars">★★★★★</div>
+              <p>"Finished quickly and efficiently, and let me take part in the build process — made it feel like <em>my</em> PC. High-quality parts only, no shortcuts. Had it a year and a half, no problems so far."</p>
+              <div class="attribution">— Jackson B., Google review</div>
+            </div>
+          </div>
+
+          <div class="testimonial-slide">
+            <div class="testimonial-card">
+              <div class="stars mono" aria-label="5 out of 5 stars">★★★★★</div>
+              <p>"Helpful and answered every question. Cable management was clean, parts matched exactly what I ordered, and they never pushed unnecessary upgrades on me."</p>
+              <div class="attribution">— Alberto G., Google review</div>
+              <a href="portfolio.html#midnight" class="mono see-build">See the build →</a>
+            </div>
+          </div>
+
+          <div class="testimonial-slide">
+            <div class="testimonial-card">
+              <div class="stars mono" aria-label="5 out of 5 stars">★★★★★</div>
+              <p>"Booked a service and it was very responsive and quick. Have had the PC over a year now and still no issues."</p>
+              <div class="attribution">— J. M., Google review</div>
+            </div>
+          </div>
+
+          <div class="testimonial-slide">
+            <div class="testimonial-card">
+              <div class="stars mono" aria-label="5 out of 5 stars">★★★★★</div>
+              <p>"Every step from booking to the final build was a breeze. Vic was honest and straightforward the whole way — especially helpful for someone like me who doesn't know much about computers."</p>
+              <div class="attribution">— Sophia H., Google review</div>
+              <a href="portfolio.html#tidal" class="mono see-build">See the build →</a>
+            </div>
+          </div>
+
+          <div class="testimonial-slide">
+            <div class="testimonial-card">
+              <div class="stars mono" aria-label="5 out of 5 stars">★★★★★</div>
+              <p>"Los precios son justos y no te tira de más cosas que no necesitas — todo lo contrario, te explica bien todo antes de cobrarte. La PC la he tenido ya un tiempo y no he tenido ningún problema, corre todo perfecto."</p>
+              <div class="attribution">— Lucas H., reseña de Google</div>
+              <a href="portfolio.html#rayo" class="mono see-build">See the build →</a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="testimonial-dots" id="testimonial-dots">
+        <button class="dot" data-index="0" aria-label="Show review 1"></button>
+        <button class="dot" data-index="1" aria-label="Show review 2"></button>
+        <button class="dot" data-index="2" aria-label="Show review 3"></button>
+        <button class="dot" data-index="3" aria-label="Show review 4"></button>
+        <button class="dot" data-index="4" aria-label="Show review 5"></button>
+      </div>
+    </div>
 
     <div style="margin-top:56px; text-align:center;">
       <a href="book.html" class="btn btn-primary">Book a Service</a>
@@ -140,5 +209,70 @@
 
 <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
 <script src="js/main.js"></script>
+<script>
+(function(){
+  var viewport = document.getElementById('testimonial-viewport');
+  var track = document.getElementById('testimonial-track');
+  var dots = document.querySelectorAll('#testimonial-dots .dot');
+  var slides = document.querySelectorAll('.testimonial-slide');
+  if (!track || !slides.length) return;
+
+  var index = 0;
+  var timer = null;
+  var AUTO_MS = 5000;
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function update(){
+    var active = slides[index];
+    var vw = viewport.getBoundingClientRect().width;
+    var center = active.offsetLeft + active.offsetWidth / 2;
+    track.style.transform = 'translateX(' + (vw / 2 - center) + 'px)';
+    slides.forEach(function(s, i){ s.classList.toggle('active', i === index); });
+    dots.forEach(function(d, i){ d.classList.toggle('active', i === index); });
+  }
+
+  function goTo(i){
+    index = (i + slides.length) % slides.length;
+    update();
+  }
+
+  function next(){ goTo(index + 1); }
+
+  function stopAuto(){
+    if (timer) clearInterval(timer);
+    timer = null;
+  }
+
+  function startAuto(){
+    if (reduceMotion) return;
+    stopAuto();
+    timer = setInterval(next, AUTO_MS);
+  }
+
+  dots.forEach(function(d, i){
+    d.addEventListener('click', function(){ goTo(i); startAuto(); });
+  });
+
+  viewport.addEventListener('mouseenter', stopAuto);
+  viewport.addEventListener('mouseleave', startAuto);
+
+  var touchStartX = 0;
+  track.addEventListener('touchstart', function(e){
+    touchStartX = e.touches[0].clientX;
+    stopAuto();
+  }, { passive: true });
+  track.addEventListener('touchend', function(e){
+    var dx = e.changedTouches[0].clientX - touchStartX;
+    if (dx > 40) goTo(index - 1);
+    else if (dx < -40) goTo(index + 1);
+    startAuto();
+  });
+
+  window.addEventListener('resize', update);
+
+  goTo(0);
+  startAuto();
+})();
+</script>
 </body>
 </html>
