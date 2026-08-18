@@ -28,4 +28,8 @@
     <loc>https://buildsbyvic.com/track.html</loc>
     <priority>0.6</priority>
   </url>
+  <url>
+    <loc>https://buildsbyvic.com/before-you-book.html</loc>
+    <priority>0.6</priority>
+  </url>
 </urlset>
