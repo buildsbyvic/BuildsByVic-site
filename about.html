@@ -68,18 +68,31 @@
   </section>
 
   <section class="section-tight" style="padding-top:0;">
-    <div class="container" style="max-width:760px;">
-      <div class="reveal bio-bubble" style="font-size:1.08rem; color:var(--slate); display:grid; gap:22px;">
-        <p>I got my start in 2018, when my dad bought me my first real gaming PC — a prebuilt with an i7-8700, an RTX 2070, and 16GB of RAM. I'd been gaming on a PS4 up to that point, so it was a serious upgrade, and I had no idea what was actually inside the case. Curiosity got the better of me, and I ended up taking the whole thing apart just to understand it — no real plan, just hours of trial and error until I had it back together and running.</p>
+    <div class="container" style="max-width:1400px;">
+      <div class="bio-reveal-wrap">
+        <div class="bio-reveal-box bio-left" id="bio-reveal-1"><img src="assets/img/bio/bio-1-ps4.webp" alt="First PS4 setup before upgrading to PC"></div>
+        <div class="bio-reveal-box bio-left" id="bio-reveal-6"><img src="assets/img/bio/bio-6-today.webp" alt="Current BuildsByVic setup today"></div>
+        <div class="bio-reveal-box bio-right" id="bio-reveal-2"><img src="assets/img/bio/bio-2-prebuilt.webp" alt="The original prebuilt PC, opened up"></div>
+        <div class="bio-reveal-box bio-right" id="bio-reveal-4"><img src="assets/img/bio/bio-4-upgrade.webp" alt="First self-built upgrade with RGB and AIO cooler"></div>
 
-        <p>That was the beginning. I started teaching myself everything I could about PC hardware, and found a lot of that early direction from Greg Salazar's "Fix or Flop" series on YouTube — it's a big part of what convinced me this was something I could actually get good at. My first real project was upgrading that same PC myself: new case, RGB memory, an AIO cooler, new fans. I ran into plenty of problems I didn't know how to solve yet, but working through them taught me more than any tutorial could have.</p>
+        <div class="reveal bio-bubble bio-text" style="font-size:1.08rem; color:var(--slate); display:grid; gap:22px;">
+          <p>I got my start in 2018, when <span class="bio-hov" data-target="2">my dad bought me my first real gaming PC</span> — a prebuilt with an i7-8700, an RTX 2070, and 16GB of RAM. I'd been gaming on a <span class="bio-hov" data-target="1">PS4</span> up to that point, so it was a serious upgrade, and I had no idea what was actually inside the case. Curiosity got the better of me, and I ended up taking the whole thing apart just to understand it — no real plan, just hours of trial and error until I had it back together and running.</p>
 
-        <p>From there I started building and upgrading PCs for classmates, which is really where I learned to work with other people's expectations and budgets, not just my own. That eventually turned into my first paid position at PCG, a local shop specializing in custom gaming builds, and later into a technician role at Geek Squad, where I built out my repair and diagnostic experience across a much wider range of hardware.</p>
+          <p>That was the beginning. I started teaching myself everything I could about PC hardware, and found a lot of that early direction from Greg Salazar's "Fix or Flop" series on YouTube — it's a big part of what convinced me this was something I could actually get good at. My first real project was upgrading that same PC myself: <span class="bio-hov" data-target="4">new case, RGB memory, an AIO cooler, new fans</span>. I ran into plenty of problems I didn't know how to solve yet, but working through them taught me more than any tutorial could have.</p>
 
-        <p>BuildsByVic is what happens when I take all of that and do it on my own terms — direct pricing, honest recommendations, and the same attention to detail whether it's a full custom build or a quick repair. I'm based in Tampa and take jobs across Lutz, Wesley Chapel, Carrollwood, and Clearwater. If your PC needs work, or you've been wanting to finally build the rig you've been planning, I'd like to help. I'm also fluent in Spanish, so if that's easier for you, just let me know.</p>
+          <p>From there I started building and upgrading PCs for classmates, which is really where I learned to work with other people's expectations and budgets, not just my own. That eventually turned into my first paid position at PCG, a local shop specializing in custom gaming builds, and later into a technician role at Geek Squad, where I built out my repair and diagnostic experience across a much wider range of hardware.</p>
+
+          <p>BuildsByVic is what happens when <span class="bio-hov" data-target="6">I take all of that and do it on my own terms</span> — direct pricing, honest recommendations, and the same attention to detail whether it's a full custom build or a quick repair. I'm based in Tampa and take jobs across Lutz, Wesley Chapel, Carrollwood, and Clearwater. If your PC needs work, or you've been wanting to finally build the rig you've been planning, I'd like to help. I'm also fluent in Spanish, so if that's easier for you, just let me know.</p>
+        </div>
       </div>
     </div>
   </section>
+
+  <div class="lightbox-backdrop" id="bio-lightbox-backdrop"></div>
+  <div class="lightbox-card" id="bio-lightbox-card">
+    <button class="lightbox-close" id="bio-lightbox-close" aria-label="Close">✕</button>
+    <img id="bio-lightbox-img" src="" alt="">
+  </div>
 </div>
 
 <section class="section-tight" style="padding-top:0;">
@@ -366,6 +379,133 @@
       startAuto();
     });
   });
+})();
+</script>
+<script>
+(function(){
+  var boxes = { '1': document.getElementById('bio-reveal-1'), '2': document.getElementById('bio-reveal-2'), '4': document.getElementById('bio-reveal-4'), '6': document.getElementById('bio-reveal-6') };
+  var images = {
+    '1': { src: 'assets/img/bio/bio-1-ps4.webp', alt: 'First PS4 setup before upgrading to PC' },
+    '2': { src: 'assets/img/bio/bio-2-prebuilt.webp', alt: 'The original prebuilt PC, opened up' },
+    '4': { src: 'assets/img/bio/bio-4-upgrade.webp', alt: 'First self-built upgrade with RGB and AIO cooler' },
+    '6': { src: 'assets/img/bio/bio-6-today.webp', alt: 'Current BuildsByVic setup today' }
+  };
+  var activeTarget = null;
+  var openTimer = null;
+  var hideTimer = null;
+
+  var bioWrap = document.querySelector('.bio-reveal-wrap');
+
+  function getZoomFactor(){
+    var zw = document.querySelector('.zoom-wrap');
+    if (!zw) return 1;
+    var z = parseFloat(getComputedStyle(zw).zoom);
+    return (z && !isNaN(z)) ? z : 1;
+  }
+
+  function positionBoxes(){
+    if (!bioWrap) return;
+    var zoom = getZoomFactor();
+    var wrapRect = bioWrap.getBoundingClientRect();
+    Object.keys(boxes).forEach(function(k){
+      var box = boxes[k];
+      var span = document.querySelector('.bio-hov[data-target="' + k + '"]');
+      if (!box || !span) return;
+      var spanRect = span.getBoundingClientRect();
+      var spanCenterViewport = spanRect.top + spanRect.height / 2;
+      var deltaFromWrapTopPostZoom = spanCenterViewport - wrapRect.top;
+      var deltaFromWrapTopPreZoom = deltaFromWrapTopPostZoom / zoom;
+      var boxHeight = box.offsetHeight;
+      var top = deltaFromWrapTopPreZoom - boxHeight / 2;
+      var maxTop = bioWrap.offsetHeight - boxHeight;
+      top = Math.max(0, Math.min(top, maxTop));
+      box.style.top = top + 'px';
+    });
+  }
+
+  function showBox(target){
+    positionBoxes();
+    Object.keys(boxes).forEach(function(k){
+      if (boxes[k]) boxes[k].classList.toggle('active', k === target);
+    });
+    activeTarget = target;
+  }
+  function hideAllNow(){
+    Object.keys(boxes).forEach(function(k){
+      if (boxes[k]) boxes[k].classList.remove('active');
+    });
+    activeTarget = null;
+  }
+
+  window.addEventListener('load', positionBoxes);
+  window.addEventListener('resize', positionBoxes);
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(positionBoxes);
+  }
+  requestAnimationFrame(function(){
+    requestAnimationFrame(positionBoxes);
+  });
+  [150, 400, 800, 1500].forEach(function(delay){
+    setTimeout(positionBoxes, delay);
+  });
+
+  document.querySelectorAll('.bio-hov').forEach(function(el){
+    var target = el.dataset.target;
+
+    el.addEventListener('mouseenter', function(){
+      if (openTimer) { clearTimeout(openTimer); openTimer = null; }
+      if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; }
+      if (activeTarget === null) {
+        openTimer = setTimeout(function(){ showBox(target); openTimer = null; }, 150);
+      } else {
+        showBox(target);
+      }
+    });
+
+    el.addEventListener('mouseleave', function(){
+      if (openTimer) { clearTimeout(openTimer); openTimer = null; }
+      hideTimer = setTimeout(function(){ hideAllNow(); hideTimer = null; }, 0);
+    });
+
+    el.addEventListener('click', function(){
+      openBioLightbox(target);
+    });
+  });
+
+  var backdrop = document.getElementById('bio-lightbox-backdrop');
+  var card = document.getElementById('bio-lightbox-card');
+  var closeBtn = document.getElementById('bio-lightbox-close');
+  var imgEl = document.getElementById('bio-lightbox-img');
+  var isOpen = false;
+
+  function positionLightbox(){
+    var targetW = Math.min(window.innerWidth * 0.82, 640);
+    var targetH = Math.min(window.innerHeight * 0.82, targetW * (4 / 3));
+    card.style.top = ((window.innerHeight - targetH) / 2) + 'px';
+    card.style.left = ((window.innerWidth - targetW) / 2) + 'px';
+    card.style.width = targetW + 'px';
+    card.style.height = targetH + 'px';
+  }
+
+  function openBioLightbox(target){
+    var data = images[target];
+    if (!data) return;
+    imgEl.src = data.src;
+    imgEl.alt = data.alt;
+    positionLightbox();
+    backdrop.classList.add('open');
+    card.classList.add('open');
+    isOpen = true;
+  }
+  function closeBioLightbox(){
+    backdrop.classList.remove('open');
+    card.classList.remove('open');
+    isOpen = false;
+  }
+  closeBtn.addEventListener('click', closeBioLightbox);
+  backdrop.addEventListener('click', closeBioLightbox);
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && isOpen) closeBioLightbox(); });
+  window.addEventListener('resize', function(){ if (isOpen) positionLightbox(); });
 })();
 </script>
 </div>
