@@ -16,6 +16,33 @@
 <link rel="icon" type="image/png" href="assets/img/favicon-32.png">
 <link rel="apple-touch-icon" href="assets/img/favicon-180.png">
 <link rel="stylesheet" href="css/style.css">
+<style>
+  .portfolio-tabs {
+    display: flex;
+    gap: 8px;
+    margin-top: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .portfolio-tab {
+    padding: 14px 4px;
+    margin-right: 28px;
+    color: var(--slate);
+    font-weight: 600;
+    font-size: 0.98rem;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    background: none;
+    border-top: none; border-left: none; border-right: none;
+  }
+  .portfolio-tab.active { color: var(--white); border-bottom-color: var(--blue); }
+  .portfolio-panel { display: none; }
+  .portfolio-panel.active { display: block; }
+  .setup-card { aspect-ratio: 4 / 3; }
+  .setup-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+  @media (max-width: 720px) {
+    .setup-grid { grid-template-columns: 1fr; }
+  }
+</style>
 <link rel="canonical" href="https://buildsbyvic.com/portfolio.html">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://buildsbyvic.com/portfolio.html">
@@ -114,6 +141,12 @@
       <p class="lede" style="margin-top:12px;">Named for what they actually look like, not who they belong to. Want yours featured? Just say the word once your build is done.</p>
     </div>
 
+    <div class="portfolio-tabs">
+      <button class="portfolio-tab active" data-tab="builds">Builds</button>
+      <button class="portfolio-tab" data-tab="setups">Setups</button>
+    </div>
+
+    <div class="portfolio-panel active" id="panel-builds">
     <div class="portfolio-grid">
       <div class="portfolio-card reveal" id="rayo">
         <img src="assets/img/portfolio/lucas.webp" alt="Pink and purple ATX build with custom figurine, nicknamed Rayo">
@@ -176,6 +209,26 @@
         <div class="portfolio-card-info">
           <h3>Ember</h3>
           <p>Black tower, red theme</p>
+        </div>
+      </div>
+    </div>
+    </div>
+
+    <div class="portfolio-panel" id="panel-setups">
+      <div class="setup-grid">
+        <div class="portfolio-card setup-card reveal">
+          <img src="assets/img/bio/bio-6-today.webp" alt="Vic's current desk setup with white BuildsByVic-branded PC case">
+          <div class="portfolio-card-info">
+            <h3>My Setup</h3>
+            <p>Where BuildsByVic actually happens</p>
+          </div>
+        </div>
+        <div class="portfolio-card setup-card reveal">
+          <img src="assets/img/portfolio/brothers-setup.webp" alt="Four-monitor L-shaped desk setup with RGB PC case">
+          <div class="portfolio-card-info">
+            <h3>The Quad</h3>
+            <p>My brother's 4-monitor L-shaped station</p>
+          </div>
         </div>
       </div>
     </div>
@@ -266,6 +319,20 @@
 
     let originRect = null;
     let isOpen = false;
+    let currentRatio = 3 / 4;
+    let currentMaxW = 640;
+
+    function computeTargetSize(ratio, maxWCap) {
+      const maxW = Math.min(window.innerWidth * 0.82, maxWCap);
+      const maxH = window.innerHeight * 0.82;
+      let w = maxW;
+      let h = w / ratio;
+      if (h > maxH) {
+        h = maxH;
+        w = h * ratio;
+      }
+      return { w: w, h: h };
+    }
 
     function openFromCard(el) {
       const rect = el.getBoundingClientRect();
@@ -278,6 +345,8 @@
       img.alt = srcImg.alt;
       title.textContent = h3 ? h3.textContent : '';
       desc.textContent = p ? p.textContent : '';
+      currentRatio = (srcImg.naturalWidth && srcImg.naturalHeight) ? (srcImg.naturalWidth / srcImg.naturalHeight) : (3 / 4);
+      currentMaxW = el.classList.contains('setup-card') ? 980 : 640;
 
       // Start the lightbox card at the exact position/size of the clicked card
       card.style.top = rect.top + 'px';
@@ -295,12 +364,11 @@
       card.style.transition = '';
 
       requestAnimationFrame(() => {
-        const targetW = Math.min(window.innerWidth * 0.82, 640);
-        const targetH = Math.min(window.innerHeight * 0.82, targetW * (4 / 3));
-        card.style.top = ((window.innerHeight - targetH) / 2) + 'px';
-        card.style.left = ((window.innerWidth - targetW) / 2) + 'px';
-        card.style.width = targetW + 'px';
-        card.style.height = targetH + 'px';
+        const size = computeTargetSize(currentRatio, currentMaxW);
+        card.style.top = ((window.innerHeight - size.h) / 2) + 'px';
+        card.style.left = ((window.innerWidth - size.w) / 2) + 'px';
+        card.style.width = size.w + 'px';
+        card.style.height = size.h + 'px';
       });
     }
 
@@ -332,12 +400,11 @@
     // Keep the open lightbox aligned if the window resizes
     window.addEventListener('resize', () => {
       if (!isOpen) return;
-      const targetW = Math.min(window.innerWidth * 0.82, 640);
-      const targetH = Math.min(window.innerHeight * 0.82, targetW * (4 / 3));
-      card.style.top = ((window.innerHeight - targetH) / 2) + 'px';
-      card.style.left = ((window.innerWidth - targetW) / 2) + 'px';
-      card.style.width = targetW + 'px';
-      card.style.height = targetH + 'px';
+      const size = computeTargetSize(currentRatio, currentMaxW);
+      card.style.top = ((window.innerHeight - size.h) / 2) + 'px';
+      card.style.left = ((window.innerWidth - size.w) / 2) + 'px';
+      card.style.width = size.w + 'px';
+      card.style.height = size.h + 'px';
     });
   })();
 
@@ -362,6 +429,16 @@
       window.addEventListener('load', focusTarget);
     }
   })();
+</script>
+<script>
+  document.querySelectorAll('.portfolio-tab').forEach(function(tab){
+    tab.addEventListener('click', function(){
+      document.querySelectorAll('.portfolio-tab').forEach(function(t){ t.classList.remove('active'); });
+      document.querySelectorAll('.portfolio-panel').forEach(function(p){ p.classList.remove('active'); });
+      tab.classList.add('active');
+      document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+    });
+  });
 </script>
 </body>
 </html>

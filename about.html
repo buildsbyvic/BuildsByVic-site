@@ -385,10 +385,10 @@
 (function(){
   var boxes = { '1': document.getElementById('bio-reveal-1'), '2': document.getElementById('bio-reveal-2'), '4': document.getElementById('bio-reveal-4'), '6': document.getElementById('bio-reveal-6') };
   var images = {
-    '1': { src: 'assets/img/bio/bio-1-ps4.webp', alt: 'First PS4 setup before upgrading to PC' },
-    '2': { src: 'assets/img/bio/bio-2-prebuilt.webp', alt: 'The original prebuilt PC, opened up' },
-    '4': { src: 'assets/img/bio/bio-4-upgrade.webp', alt: 'First self-built upgrade with RGB and AIO cooler' },
-    '6': { src: 'assets/img/bio/bio-6-today.webp', alt: 'Current BuildsByVic setup today' }
+    '1': { src: 'assets/img/bio/bio-1-ps4.webp', alt: 'First PS4 setup before upgrading to PC', ratio: 525/700 },
+    '2': { src: 'assets/img/bio/bio-2-prebuilt.webp', alt: 'The original prebuilt PC, opened up', ratio: 394/700 },
+    '4': { src: 'assets/img/bio/bio-4-upgrade.webp', alt: 'First self-built upgrade with RGB and AIO cooler', ratio: 700/394 },
+    '6': { src: 'assets/img/bio/bio-6-today.webp', alt: 'Current BuildsByVic setup today', ratio: 700/525 }
   };
   var activeTarget = null;
   var openTimer = null;
@@ -478,9 +478,17 @@
   var imgEl = document.getElementById('bio-lightbox-img');
   var isOpen = false;
 
+  var currentBioRatio = 3 / 4;
+
   function positionLightbox(){
-    var targetW = Math.min(window.innerWidth * 0.82, 640);
-    var targetH = Math.min(window.innerHeight * 0.82, targetW * (4 / 3));
+    var maxW = Math.min(window.innerWidth * 0.82, 640);
+    var maxH = window.innerHeight * 0.82;
+    var targetW = maxW;
+    var targetH = targetW / currentBioRatio;
+    if (targetH > maxH) {
+      targetH = maxH;
+      targetW = targetH * currentBioRatio;
+    }
     card.style.top = ((window.innerHeight - targetH) / 2) + 'px';
     card.style.left = ((window.innerWidth - targetW) / 2) + 'px';
     card.style.width = targetW + 'px';
@@ -492,6 +500,7 @@
     if (!data) return;
     imgEl.src = data.src;
     imgEl.alt = data.alt;
+    currentBioRatio = data.ratio || (3 / 4);
     positionLightbox();
     backdrop.classList.add('open');
     card.classList.add('open');
