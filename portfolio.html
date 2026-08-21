@@ -321,6 +321,7 @@
     let isOpen = false;
     let currentRatio = 3 / 4;
     let currentMaxW = 640;
+    let closeCleanupTimer = null;
 
     function computeTargetSize(ratio, maxWCap) {
       const maxW = Math.min(window.innerWidth * 0.82, maxWCap);
@@ -335,6 +336,10 @@
     }
 
     function openFromCard(el) {
+      if (closeCleanupTimer) {
+        clearTimeout(closeCleanupTimer);
+        closeCleanupTimer = null;
+      }
       const rect = el.getBoundingClientRect();
       const srcImg = el.querySelector('img');
       const h3 = el.querySelector('h3');
@@ -382,8 +387,10 @@
       document.body.style.overflow = '';
       isOpen = false;
 
-      setTimeout(() => {
+      if (closeCleanupTimer) clearTimeout(closeCleanupTimer);
+      closeCleanupTimer = setTimeout(() => {
         card.classList.remove('open');
+        closeCleanupTimer = null;
       }, 420);
     }
 
